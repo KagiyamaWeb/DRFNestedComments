@@ -2,5 +2,8 @@ from django.urls import path, include
 from . import views
  
 urlpatterns = [
-    path('', views.post_list, name='post_list'),
+    path('', views.PostListView.as_view(), name='post_list'),
+    path('post/<int:pk>/', views.PostDetail.as_view(), name='post_detail'),
+    path('post/new/', views.PostNew.as_view(), name='post_new'),
+    #path('post/<str:user>', views.user_posts, name='user_posts'),
 ]

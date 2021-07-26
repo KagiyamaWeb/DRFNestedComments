@@ -13,6 +13,7 @@ class PostDetail(View):
     def get(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
         return render(request, 'blog/post_detail.html', {'post': post})
+
 class PostNew(View):
     def post(self, request):
         form = PostForm(request.POST)
@@ -22,6 +23,13 @@ class PostNew(View):
             post.published_date = timezone.now()
             post.save()
             return redirect('post_detail', pk=post.pk)
+
     def get(self, request):
         form = PostForm()
         return render(request, 'blog/post_edit.html', {'form': form})
+'''
+class Subscribe(View):
+    def get(self, request, username):
+        user = get_object_or_404(Profile, username=username)
+        user.subscribers
+'''

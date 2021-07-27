@@ -1,6 +1,6 @@
 from django import forms
-
-from .models import Post
+from django.contrib.admin import widgets        
+from .models import Post, MPTTComment
 
 class PostForm(forms.ModelForm):
 

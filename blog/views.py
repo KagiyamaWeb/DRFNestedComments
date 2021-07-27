@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Post
+from .models import Post, MPTTComment
 from .forms import PostForm
 from django.utils import timezone
 from django.views import View
@@ -12,7 +12,8 @@ class PostListView(View):
 class PostDetail(View):
     def get(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
-        return render(request, 'blog/post_detail.html', {'post': post})
+        comments = MPTTComment.objects.filter(post = post)
+        return render(request, 'blog/post_detail.html', {'post': post, 'comments' : comments})
 
 class PostNew(View):
     def post(self, request):

@@ -3,8 +3,6 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.db.models.signals import post_save
-#from django.contrib.comments.models import Comment
-#from mptt.models import MPTTModel, TreeForeignKey
 from mptt.models import MPTTModel, TreeForeignKey
 
 class Post(models.Model):
@@ -21,8 +19,11 @@ class Post(models.Model):
         self.save()
 
     def get_children(self):
-        return MPTTComment.objects.filter(post=self)[:3]
+        return MPTTComment.objects.filter(post=self)
 
+    def get_third_level(self):
+        tree_objs =  MPTTComment.objects.filter(post=self, level__lte=2)
+        return (tree_objs)
 
     def __str__(self):
         return self.title
@@ -32,11 +33,14 @@ class Comment(models.Model):
         'auth.User',
         on_delete=models.CASCADE,
     )
-    #parent = models.ForeignKey('self', related_name='children', null=True, blank=True, on_delete=models.CASCADE)
     comment_text = models.TextField()
     post = models.ForeignKey('Post', on_delete=models.CASCADE, null=True)
     date = models.DateTimeField(default=timezone.now)
-     
+    
+    def third_level_children(self):
+        if self.level == 3:
+            return self.get_children()
+
     def __str__(self):
         return f"Comment by {self.author}: {self.comment_text[0:40]}..." 
 
@@ -83,22 +87,4 @@ class Subscription(models.Model):
 
     def __str__(self):
        return self.category
-
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    #subscriptions = models.ManyToManyField(Subscription)
-    #subscribtions = models.ListField()
-    subscribers = models.ManyToManyField(User, related_name='subscriptions', blank=True)
-
-    @receiver(post_save, sender=User)
-    def create_user_profile(sender, instance, created, **kwargs):
-        if created:
-            Profile.objects.create(user=instance)
-
-    @receiver(post_save, sender=User)
-    def save_user_profile(sender, instance, **kwargs):
-        instance.profile.save()
-    
-    def subscribe(self, username):
-        subscribers = get
 '''    

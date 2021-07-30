@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'blog.apps.BlogConfig',
     #'django.contrib.comments',
     'mptt',
+    'rest_framework',
     #'comments',
 ]
 

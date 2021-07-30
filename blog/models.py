@@ -23,7 +23,7 @@ class Post(models.Model):
         return (tree_objs)
 
     def __str__(self):
-        return self.title
+        return f"{self.title} id({self.id})"
 
 class Comment(models.Model):
     author = models.ForeignKey(

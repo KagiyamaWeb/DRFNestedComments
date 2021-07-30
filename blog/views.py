@@ -13,7 +13,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.generics import ListCreateAPIView, RetrieveAPIView, RetrieveUpdateAPIView
 
 from django.contrib.auth.models import User
-from .serializers import PostSerializer, CommentSerializer
+from .serializers import PostSerializer, CommentSerializer, CommentFullSerializer
 
 class PostListView(View):
     def get(self, request):
@@ -96,14 +96,15 @@ class ThreeLevelCommentAPIView(ListCreateAPIView):
 class ThirdLevelDownAPI(ListCreateAPIView):
 
     queryset = MPTTComment.objects.all()
-    serializer_class = CommentSerializer
-
+    serializer_class = CommentFullSerializer
+    '''
     def get(self, request, pk, cpk):
-        comments = get_object_or_404(MPTTComment, post=pk, id=cpk).get_descendants()
+        #comments = get_object_or_404(MPTTComment, post=pk, id=cpk).get_descendants()
         #comments = MPTTComment.objects.filter(post=pk, parent=cpk)
+        comments = get_object_or_404(MPTTComment, post=pk, id=cpk)
         serializer = CommentSerializer(comments, many=True)
         return Response({"comments": serializer.data})
-
+    '''
     def perform_create(self, serializer):
         author = get_object_or_404(User, id=self.request.data.get('author'))
         return serializer.save(author=author)

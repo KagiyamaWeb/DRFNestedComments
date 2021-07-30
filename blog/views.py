@@ -47,8 +47,8 @@ class PostsAPIView(ListCreateAPIView):
     def perform_create(self, serializer):
         author = get_object_or_404(User, id=self.request.data.get('author'))
         date = datetime.now()
-        return serializer.save(author=author, date =date)
-
+        return serializer.save(author=author, date=date)
+'''
 class PostDetailAPIView(ListCreateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
@@ -64,7 +64,7 @@ class PostDetailAPIView(ListCreateAPIView):
         #parent = get_object_or_404(MPTTComment, id = self.request.data.get('parent'))
         #return serializer.save(author=author, post=post, parent=parent)
         return serializer.save(author=author)
-
+'''
 class CommentsDetailAPIView(APIView):
 
     def get(self, request, pk):
@@ -93,7 +93,10 @@ class ThreeLevelCommentAPIView(ListCreateAPIView):
         author = get_object_or_404(User, id=self.request.data.get('author'))
         return serializer.save(author=author)
 
-class ThirdLevelDownAPI(APIView):
+class ThirdLevelDownAPI(ListCreateAPIView):
+
+    queryset = MPTTComment.objects.all()
+    serializer_class = CommentSerializer
 
     def get(self, request, pk, cpk):
         comments = get_object_or_404(MPTTComment, post=pk, id=cpk).get_descendants()

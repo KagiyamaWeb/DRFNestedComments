@@ -45,7 +45,11 @@ INSTALLED_APPS = [
 ]
 
 COMMENTS_APP = 'comments'
-
+'''
+rest_framework = {
+    'DATETIME_FORMAT': "%Y-%m-%d %H:%M:%S.%f%z", 
+}
+'''
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

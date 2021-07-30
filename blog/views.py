@@ -84,7 +84,7 @@ class ThreeLevelCommentAPIView(APIView):
 class ThirdLevelDownAPI(APIView):
 
     def get(self, request, pk, cpk):
-        comments = get_object_or_404(MPTTComment, post=pk, id=cpk).get_children()
+        comments = get_object_or_404(MPTTComment, post=pk, id=cpk).get_descendants()
         #comments = MPTTComment.objects.filter(post=pk, parent=cpk)
         serializer = CommentSerializer(comments, many=True)
         return Response({"comments": serializer.data})

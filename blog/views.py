@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Post, MPTTComment
 from .forms import PostForm
@@ -8,8 +9,7 @@ from django.views import View
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import get_object_or_404
-from rest_framework.generics import GenericAPIView
-from rest_framework.mixins import ListModelMixin, CreateModelMixin
+
 from rest_framework.generics import ListCreateAPIView, RetrieveAPIView, RetrieveUpdateAPIView
 
 from django.contrib.auth.models import User
@@ -46,14 +46,23 @@ class PostsAPIView(ListCreateAPIView):
 
     def perform_create(self, serializer):
         author = get_object_or_404(User, id=self.request.data.get('author'))
-        return serializer.save(author=author)
+        date = datetime.now()
+        return serializer.save(author=author, date =date)
 
-class PostDetailAPIView(RetrieveUpdateAPIView):
+class PostDetailAPIView(ListCreateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
+    def get(self, request, pk):
+        post = Post.objects.filter(id=pk)
+        serializer = PostSerializer(post)
+        return Response({"comments": serializer.data})
+
     def perform_create(self, serializer):
         author = get_object_or_404(User, id=self.request.data.get('author'))
+        #post = get_object_or_404(Post, id = self.request.data.get('post'))
+        #parent = get_object_or_404(MPTTComment, id = self.request.data.get('parent'))
+        #return serializer.save(author=author, post=post, parent=parent)
         return serializer.save(author=author)
 
 class CommentsDetailAPIView(APIView):
@@ -70,7 +79,10 @@ class CommentsDetailAPIView(APIView):
         #return serializer.save(author=author, post=post, parent=parent)
         return serializer.save(author=author)
 
-class ThreeLevelCommentAPIView(APIView):
+class ThreeLevelCommentAPIView(ListCreateAPIView):
+
+    queryset = MPTTComment.objects.all()
+    serializer_class = CommentSerializer
 
     def get(self, request, pk):
         comments = MPTTComment.objects.filter(post=pk, level__lte=2)
